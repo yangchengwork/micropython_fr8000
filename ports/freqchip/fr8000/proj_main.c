@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "gap_api.h"
-#include "gatt_api.h"
-#include "ble_stack.h"
+// #include "gap_api.h"
+// #include "gatt_api.h"
+// #include "ble_stack.h"
 
 #include "app_config.h"
 
@@ -21,7 +21,7 @@
 
 #include "plf.h"
 
-#include "uart_demo.h"
+// #include "uart_demo.h"
 
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
@@ -70,5 +70,8 @@ void user_main(void)
     /* demo select: UART_TRANSMIT_RECEIVE */
 	/* demo select: UART_TRANSMIT_RECEIVE_IT  */
     /* demo select: UART_TRANSMIT_RECEIVE_DMA  */
-    uart_demo(UART_TRANSMIT_RECEIVE);
+    // uart_demo(UART_TRANSMIT_RECEIVE);
+    py_main();
+    
+    while (1) {}
 }
