@@ -25,7 +25,7 @@ typedef long mp_off_t;
 #include <alloca.h>
 
 // Define the port's name and hardware.
-#define MICROPY_HW_BOARD_NAME "example-board"
-#define MICROPY_HW_MCU_NAME   "unknown-cpu"
+#define MICROPY_HW_BOARD_NAME "fr8008xp"
+#define MICROPY_HW_MCU_NAME   "fr8000"
 
 #define MP_STATE_PORT MP_STATE_VM
