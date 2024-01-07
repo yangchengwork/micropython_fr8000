@@ -1,3 +1,4 @@
+
 #include "py/builtin.h"
 #include "py/compile.h"
 #include "py/gc.h"
@@ -43,6 +44,6 @@ mp_import_stat_t mp_import_stat(const char *path) {
 }
 
 // There is no filesystem so opening a file raises an exception.
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+mp_lexer_t *mp_lexer_new_from_file(qstr filename) {
     mp_raise_OSError(MP_ENOENT);
 }
