@@ -1,123 +1,84 @@
-/*
- * This file is part of the µOS++ distribution.
- *   (https://github.com/micro-os-plus)
- * Copyright (c) 2014 Liviu Ionescu.
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom
- * the Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
 
-// ----------------------------------------------------------------------------
+#define WEAK    __attribute__((weak))
 
-#include "ExceptionHandlers.h"
+WEAK void Reset_Handler(void);
+WEAK void NMI_Handler(void);
+WEAK void HardFault_Handler(void);
+WEAK void MemManage_Handler(void);
+WEAK void BusFault_Handler(void);
+WEAK void UsageFault_Handler(void);
+WEAK void SVC_Handler(void);
+WEAK void DebugMon_Handler(void);
+WEAK void PendSV_Handler(void);
+WEAK void SysTick_Handler(void);
 
-// ----------------------------------------------------------------------------
+WEAK void rwble_isr_ram(void);
+WEAK void dma_isr(void);
+WEAK void timer0_isr(void);
+WEAK void timer1_isr(void);
+WEAK void i2c0_isr(void);
+WEAK void i2c1_isr(void);
+WEAK void spim0_isr(void);
+WEAK void spim1_isr(void);
+WEAK void spis_isr(void);
+WEAK void uart0_isr(void);
+WEAK void uart1_isr(void);
+WEAK void pdm_isr(void);
+WEAK void exti_isr(void);
+WEAK void pmu_isr(void);
+WEAK void pwm_isr(void);
+WEAK void usb_isr(void);
+WEAK void lcd_isr(void);
+WEAK void i2s_isr(void);
 
-void __attribute__((weak))
-Default_Handler(void);
+typedef void (* const pHandler)(void);
 
-// Forward declaration of the specific IRQ handlers. These are aliased
-// to the Default_Handler, which is a 'forever' loop. When the application
-// defines a handler (with the same name), this will automatically take
-// precedence over these weak definitions
-//
-// TODO: Rename this and add the actual routines here.
-
-void __attribute__ ((weak, alias ("Default_Handler"))) DeviceInterrupt_Handler(void);
-void __attribute__ ((weak, alias ("Default_Handler"))) rwble_isr_ram(void);
-void __attribute__ ((weak, alias ("Default_Handler"))) dma_isr(void);
-void uart0_isr_rom(void);
-
-// ----------------------------------------------------------------------------
-
-typedef void
-(* const pHandler)(void);
-
-// ----------------------------------------------------------------------------
-
-// The vector table.
-// This relies on the linker script to place at correct location in memory.
-
-__attribute__ ((section(".isr_vector"),used))
-pHandler __isr_vectors[] =
-  { //
-    (pHandler) 0x00000000,                        // The initial stack pointer
-        Reset_Handler,                            // The reset handler
-
-        NMI_Handler,                              // The NMI handler
-        HardFault_Handler,                        // The hard fault handler
-
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-        MemManage_Handler,                        // The MPU fault handler
-        BusFault_Handler,// The bus fault handler
-        UsageFault_Handler,// The usage fault handler
-#else
-        0, 0, 0,                  // Reserved
-#endif
-        0,                                        // Reserved
-        0,                                        // Reserved
-        0,                                        // Reserved
-        0,                                        // Reserved
-        SVC_Handler,                              // SVCall handler
-#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
-        DebugMon_Handler,                         // Debug monitor handler
-#else
-        0,                    // Reserved
-#endif
-        0,                                        // Reserved
-        PendSV_Handler,                           // The PendSV handler
-        SysTick_Handler,                          // The SysTick handler
-
-        // ----------------------------------------------------------------------
-        // DEVICE vectors
-        rwble_isr_ram,                          // Device specific
-        dma_isr,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        uart0_isr_rom,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    // TODO: rename and add more vectors here
-    };
-
-// ----------------------------------------------------------------------------
-
-// Processor ends up here if an unexpected interrupt occurs or a specific
-// handler is not present in the application code.
-
-void __attribute__ ((section(".after_vectors")))
-Default_Handler(void)
+__attribute__ ((section(".isr_vector"), used)) pHandler __isr_vectors[] =
 {
-  while (1)
-    {
-    }
-}
+    0x00000000,             // The initial stack pointer
+    Reset_Handler,          // The reset handler
+    NMI_Handler,            // The NMI handler
+    HardFault_Handler,      // The hard fault handler
+    MemManage_Handler,      // The MPU fault handler
+    BusFault_Handler,       // The bus fault handler
+    UsageFault_Handler,     // The usage fault handler
+    0,                      // Reserved
+    0,                      // Reserved
+    0,                      // Reserved
+    0,                      // Reserved
+    SVC_Handler,            // SVCall handler
+    DebugMon_Handler,       // Debug monitor handler
+    0,                      // Reserved
+    PendSV_Handler,         // The PendSV handler
+    SysTick_Handler,        // The SysTick handler
 
-// ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------
+    // DEVICE vectors
+    // ----------------------------------------------------------------------
+    rwble_isr_ram,          // 0
+    dma_isr,                // 1
+    timer0_isr,             // 2
+    timer1_isr,             // 3
+    i2c0_isr,               // 4
+    i2c1_isr,               // 5
+    spim0_isr,              // 6
+    spim1_isr,              // 7
+    spis_isr,               // 8
+    uart0_isr,              // 9
+    uart1_isr,              // 10
+    pdm_isr,                // 11
+    0,                      // 12
+    0,                      // 13
+    exti_isr,               // 14
+    pmu_isr,                // 15
+    0,                      // 16
+    0,                      // 17
+    pwm_isr,                // 18
+    usb_isr,                // 19
+    0,                      // 20
+    lcd_isr,                // 21
+    0,                      // 22
+    i2s_isr,                // 23
+    0,
+    0,
+};

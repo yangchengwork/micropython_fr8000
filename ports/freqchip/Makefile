@@ -27,13 +27,14 @@ SRC_C = \
 	components/driver/driver_dma.c \
 	components/driver/driver_gpio.c \
 	components/modules/platform/src/gcc/boot_vectors.c \
-	components/modules/platform/src/gcc/exception_handlers.c \
 	components/modules/common/src/co_log.c \
 	components/driver/driver_system.c \
 	shared/readline/readline.c \
 	shared/runtime/gchelper_generic.c \
 	shared/runtime/pyexec.c \
 	shared/runtime/stdout_helpers.c \
+
+# components/modules/platform/src/gcc/exception_handlers.c \
 
 # Define source files containung qstrs.
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
@@ -72,7 +73,7 @@ endif
 LDFLAGS_CORTEX_M3 = -mthumb -mcpu=cortex-m3
 LDFLAGS = -O3 $(LDFLAGS_CORTEX_M3)
 LDFLAGS += -Tfreqchip8000.ld
-LDFLAGS += -Tcomponents/modules/platform/src/gcc/syscall_gcc.txt
+LDFLAGS += -T components/modules/platform/src/gcc/syscall_gcc.txt
 LDFLAGS += -g3 -Xlinker 
 LDFLAGS += --gc-sections 
 LDFLAGS += --specs=nosys.specs -u _printf_float
@@ -81,6 +82,17 @@ LIBS  += components/modules/platform/src/gcc/libfr800x_stack.a
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
+
+Target_OBJS : $(OBJ)
+
+$(BUILD)/%.o : %.c
+	$(info Bulid: compiling $^)
+	$(NO_ECHO)$(CC) $(CFLAGS) $(INC) -c -o  $@ $<
+
+$(BUILD)/%.o : %.s
+	$(info Bulid: compiling $^)
+	$(NO_ECHO)$(CC) $(CFLAGS) $(INC) -c -o  $@ $<
+
 
 # Define the top-level target, the main firmware.
 # all: $(BUILD)/$(PROJECT_NAME).elf
@@ -93,11 +105,6 @@ $(BUILD)/$(PROJECT_NAME).elf: $(OBJ)
 	$(NO_ECHO)$(OBJCOPY) -O ihex   -S $(BUILD)/$(PROJECT_NAME).elf $(PROJECT_NAME).hex
 	$(NO_ECHO)$(OBJDUMP) -D $(BUILD)/$(PROJECT_NAME).elf > $(PROJECT_NAME).dis
 
-
-$(BUILD)/$(PROJECT_NAME).out: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(CC) $(LDFLAGS) -o $@ $^ -Wl,-Map=$(BUILD)/firmware.map $(LIBS)
-	$(Q)$(SIZE) $@
 
 $(BUILD)/$(PROJECT_NAME).bin: $(BUILD)/$(PROJECT_NAME).elf
 	$(Q)$(OBJCOPY) -O binary $^ $(BUILD)/$(PROJECT_NAME).bin

@@ -4,10 +4,11 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 
-// #include "gap_api.h"
-// #include "gatt_api.h"
-// #include "ble_stack.h"
+#include "gap_api.h"
+#include "gatt_api.h"
+#include "ble_stack.h"
 
 #include "app_config.h"
 
@@ -27,7 +28,7 @@
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
 const char *app_tag = "uart";
 
-#define SYSTEM_STACK_SIZE           0x800
+#define SYSTEM_STACK_SIZE           0x1800
 
 __attribute__((section("stack_section"))) static uint32_t system_stack[SYSTEM_STACK_SIZE/sizeof(uint32_t)];
 
@@ -102,11 +103,10 @@ void proj_init(void)
     /* system sleep is allowed */
     system_sleep_disable();
 	
-	// GLOBAL_INT_START();
+	GLOBAL_INT_START();
 
     uart_demo();
-    // uart_write(UART1_BASE, "abcde", 5);
-    LOG_INFO(app_tag, "gump\r\n");
+    LOG_INFO(app_tag, "micro python done\r\n");
 }
 
 void user_main(void)
@@ -129,7 +129,7 @@ void user_main(void)
     py_main();
     
     while (1) {
-        uart_putc_noint(UART1_BASE, '*');
+        // uart_putc_noint(UART1_BASE, '*');
     }
 }
 
@@ -158,3 +158,42 @@ void uart1_isr(void)
     }
 }
 
+int _read (int fd, char *pBuffer, int size)
+{
+//    co_printf("\nr\n");
+}
+
+int _getpid (int id)
+{
+
+}
+
+int _close (int id)
+{
+
+}
+
+int _kill (int pid, int sig)
+{
+
+}
+
+int _fstat (int fildes,
+        struct stat *st)
+{
+
+}
+
+int _isatty (int file)
+{
+  // errno = ENOSYS;
+  return 0;
+}
+
+int _lseek (int   file,
+        int   ptr,
+        int   dir)
+{
+  // errno = ENOSYS;
+  return -1;
+}
