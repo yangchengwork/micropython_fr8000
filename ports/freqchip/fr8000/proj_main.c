@@ -52,7 +52,8 @@ extern void uart_putc_noint(uint32_t uart_addr, uint8_t c);
 #define FREQCHIP_UART_BUF_SIZE      256
 typedef struct freqchip_8000_uart_buf_status {
     uint8_t     buf[FREQCHIP_UART_BUF_SIZE];
-    uint16_t    index;
+    uint8_t     r_index;
+    uint8_t     s_index;
 } fr8000_uart_t;
 
 static GPIO_InitTypeDef    GPIO_Handle;
@@ -136,9 +137,10 @@ void user_main(void)
 uint8_t fr8000_read_char(void)
 {
     uint8_t ret = 0;
-    if (uart_buf.index > 0) {
-        uart_buf.index--;
-        ret = uart_buf.buf[uart_buf.index];
+    if (uart_buf.r_index != uart_buf.s_index) {
+        ret = uart_buf.buf[uart_buf.s_index];
+        uart_buf.s_index++;
+        // uart_putc_noint(UART0_BASE, ret);
     }
     return ret;
 }
@@ -152,7 +154,7 @@ void uart1_isr(void)
     if ((isr_id&0x0f) == 0x04 || (isr_id&0x0f) == 0x0c) {
         c = (uint8_t)uart_reg_ram->DATA_DLL.DATA;
         // 为了省事，没有做溢出处理
-        uart_buf.buf[uart_buf.index++] = c;
+        uart_buf.buf[uart_buf.r_index++] = c;
     } else if ((isr_id&0x0f) == 0x06) {
         volatile uint32_t tmp = uart_reg_ram->LSR.LSR_DWORD;
     }
