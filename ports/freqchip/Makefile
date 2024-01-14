@@ -1,4 +1,6 @@
-# BUILD_VERBOSE = 1
+BUILD_VERBOSE = 1
+
+PROJECT_NAME := fr8000_micropython
 
 # Include the core environment definitions; this will set $(TOP).
 include ../../py/mkenv.mk
@@ -12,16 +14,22 @@ CFLAGS += -I. -I$(BUILD) -I$(TOP)
 LIBS += -lm
 
 CROSS_COMPILE ?= arm-none-eabi-
+OBJDUMP ?= $(CROSS_COMPILE)objdump
 
 # Define the required source files.
 SRC_C = \
 	main.c \
 	mphalport.c \
-    help.c \
-    fr8000/proj_main.c \
-    components/modules/platform/src/gcc/boot_vectors.c \
-    components/modules/platform/src/gcc/exception_handlers.c \
-    components/driver/driver_system.c \
+	help.c \
+	fr8000/proj_main.c \
+	components/driver/driver_pmu.c \
+	components/driver/driver_uart_ex.c \
+	components/driver/driver_dma.c \
+	components/driver/driver_gpio.c \
+	components/modules/platform/src/gcc/boot_vectors.c \
+	components/modules/platform/src/gcc/exception_handlers.c \
+	components/modules/common/src/co_log.c \
+	components/driver/driver_system.c \
 	shared/readline/readline.c \
 	shared/runtime/gchelper_generic.c \
 	shared/runtime/pyexec.c \
@@ -38,6 +46,10 @@ INC += -I. \
 	-Icomponents/modules/platform/include \
 	-Icomponents/modules/platform/include/cmsis \
 	-Icomponents/modules/common/include \
+	-Icomponents/modules/os/include \
+	-Icomponents/ble/include/gatt \
+	-Icomponents/ble/include/gap \
+	-Icomponents/ble/include \
 	-Icomponents/driver/include \
 	-Icomponents/driver/drv_common \
 	-Ifr8000 \
@@ -60,31 +72,36 @@ endif
 LDFLAGS_CORTEX_M3 = -mthumb -mcpu=cortex-m3
 LDFLAGS = -Os -g $(LDFLAGS_CORTEX_M3)
 LDFLAGS += -Tfreqchip8000.ld
-LDFLAGS += components/modules/platform/src/gcc/syscall_gcc.txt
+LDFLAGS += -Tcomponents/modules/platform/src/gcc/syscall_gcc.txt
 LDFLAGS += -Wl,--gc-sections
-# LDFLAGS += --specs=nosys.specs
+LDFLAGS += --specs=nosys.specs -u _printf_float
 LDFLAGS += -L.
+LIBS  += components/modules/platform/src/gcc/libfr800x_stack.a
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 
 # Define the top-level target, the main firmware.
-# all: $(BUILD)/firmware.elf
-all: $(BUILD)/firmware.bin
+# all: $(BUILD)/$(PROJECT_NAME).elf
+all: $(BUILD)/$(PROJECT_NAME).bin
 
 # Define how to build the firmware.
-$(BUILD)/firmware.elf: $(OBJ)
-	$(ECHO) "LINK $@"
-	$(Q)$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
-	$(Q)$(SIZE) $@
+$(BUILD)/$(PROJECT_NAME).elf: $(OBJ)
+	$(Q)$(CC) $(LDFLAGS) -Wl,-Map,"$(PROJECT_NAME).map" -o $(BUILD)/$(PROJECT_NAME).elf $^ $(LIBS)
+	$(NO_ECHO)$(OBJCOPY) -O binary -S $(BUILD)/$(PROJECT_NAME).elf $(PROJECT_NAME).bin
+	$(NO_ECHO)$(OBJCOPY) -O ihex   -S $(BUILD)/$(PROJECT_NAME).elf $(PROJECT_NAME).hex
+	$(NO_ECHO)$(OBJDUMP) -D $(BUILD)/$(PROJECT_NAME).elf > $(PROJECT_NAME).dis
 
-$(BUILD)/firmware.out: $(OBJ)
+
+$(BUILD)/$(PROJECT_NAME).out: $(OBJ)
 	$(ECHO) "LINK $@"
 	$(Q)$(CC) $(LDFLAGS) -o $@ $^ -Wl,-Map=$(BUILD)/firmware.map $(LIBS)
 	$(Q)$(SIZE) $@
 
-$(BUILD)/firmware.bin: $(BUILD)/firmware.out
-	$(Q)$(OBJCOPY) -O binary $^ $(BUILD)/firmware.bin
+$(BUILD)/$(PROJECT_NAME).bin: $(BUILD)/$(PROJECT_NAME).elf
+	$(Q)$(OBJCOPY) -O binary $^ $(BUILD)/$(PROJECT_NAME).bin
+	
+# $(Q)$(OBJDUMP) -D $(BUILD)/$(PROJECT_NAME).elf > $(PROJECT_NAME).dis
 
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk

@@ -8,7 +8,7 @@
 // will still be able to execute pre-compiled scripts, compiled with mpy-cross.
 #define MICROPY_ENABLE_COMPILER     (1)
 
-#define MICROPY_QSTR_EXTRA_POOL           mp_qstr_frozen_const_pool
+// #define MICROPY_QSTR_EXTRA_POOL           mp_qstr_frozen_const_pool
 
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)

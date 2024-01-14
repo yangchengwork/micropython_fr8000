@@ -25,11 +25,13 @@
 
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
-const char *app_tag = "project";
+const char *app_tag = "uart";
 
 #define SYSTEM_STACK_SIZE           0x800
 
 __attribute__((section("stack_section"))) static uint32_t system_stack[SYSTEM_STACK_SIZE/sizeof(uint32_t)];
+
+extern int py_main(void);
 
 const struct jump_table_version_t _jump_table_version __attribute__((section("jump_table_3"))) = 
 {
@@ -40,7 +42,7 @@ const struct jump_table_version_t _jump_table_version __attribute__((section("ju
 const struct jump_table_image_t _jump_table_image __attribute__((section("jump_table_1"))) =
 {
     .image_type = IMAGE_TYPE_APP,
-    .image_size = 0x19000,
+    .image_size = 0x30000,
 };
 
 void proj_init(void)
@@ -75,3 +77,11 @@ void user_main(void)
     
     while (1) {}
 }
+
+uint8_t fr8000_read_char(void)
+{
+    uint8_t ret = 0;
+    return ret;
+}
+
+
