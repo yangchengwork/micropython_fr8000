@@ -39,3 +39,5 @@ typedef long mp_off_t;
 #define MICROPY_HW_MCU_NAME   "fr8000"
 
 #define MP_STATE_PORT MP_STATE_VM
+
+#define MP_PY_BUILTINS_HELP_TEXT    freqchip_help_text

@@ -1,4 +1,4 @@
-BUILD_VERBOSE = 1
+# BUILD_VERBOSE = 1
 
 PROJECT_NAME := fr8000_micropython
 
@@ -57,7 +57,7 @@ INC += -I. \
 	-I$(BUILD) \
 
 CFLAGS_CORTEX_M3 = -mthumb -mcpu=cortex-m3 -fsigned-char -fmessage-length=0
-CFLAGS = -Os -g $(INC) $(CFLAGS_CORTEX_M3) $(COPT)
+CFLAGS = -O3 -g3 $(INC) $(CFLAGS_CORTEX_M3) $(COPT)
 CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -std=gnu11
 
@@ -70,10 +70,11 @@ COPT += -Os -DNDEBUG
 endif
 
 LDFLAGS_CORTEX_M3 = -mthumb -mcpu=cortex-m3
-LDFLAGS = -Os -g $(LDFLAGS_CORTEX_M3)
+LDFLAGS = -O3 $(LDFLAGS_CORTEX_M3)
 LDFLAGS += -Tfreqchip8000.ld
 LDFLAGS += -Tcomponents/modules/platform/src/gcc/syscall_gcc.txt
-LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -g3 -Xlinker 
+LDFLAGS += --gc-sections 
 LDFLAGS += --specs=nosys.specs -u _printf_float
 LDFLAGS += -L.
 LIBS  += components/modules/platform/src/gcc/libfr800x_stack.a

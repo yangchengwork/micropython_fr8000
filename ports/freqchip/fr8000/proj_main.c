@@ -16,7 +16,7 @@
 
 #include "driver_system.h"
 #include "driver_pmu.h"
-#include "driver_uart.h"
+#include "driver_uart_ex.h"
 #include "driver_gpio.h"
 
 #include "plf.h"
@@ -45,6 +45,55 @@ const struct jump_table_image_t _jump_table_image __attribute__((section("jump_t
     .image_size = 0x30000,
 };
 
+extern void uart_write(uint32_t uart_addr, const uint8_t *bufptr, uint32_t size);
+extern void uart_putc_noint(uint32_t uart_addr, uint8_t c);
+
+#define FREQCHIP_UART_BUF_SIZE      256
+typedef struct freqchip_8000_uart_buf_status {
+    uint8_t     buf[FREQCHIP_UART_BUF_SIZE];
+    uint16_t    index;
+} fr8000_uart_t;
+
+static GPIO_InitTypeDef    GPIO_Handle;
+static UART_HandleTypeDef  Uart1_handle;
+
+static fr8000_uart_t uart_buf = {0};
+
+void uart_demo(void)
+{
+    __SYSTEM_UART1_CLK_ENABLE();
+
+    /* init GPIO Alternate Function */
+    /*
+    GPIO_Handle.Pin       = GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
+    GPIO_Handle.Pull      = GPIO_PULLUP;
+    GPIO_Handle.Alternate = GPIO_FUNCTION_5;
+    gpio_init(GPIO_A, &GPIO_Handle);
+    */
+
+    system_set_port_pull(GPIO_PA2,GPIO_PULL_UP,true);
+    /* set PA2 and PA3 for AT command interface */
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_2, PORTA2_FUNC_UART1_RXD);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_3, PORTA3_FUNC_UART1_TXD);
+
+    /* init uart1 */   
+    Uart1_handle.UARTx = Uart1;
+    Uart1_handle.Init.BaudRate   = 115200;
+    Uart1_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+    Uart1_handle.Init.StopBits   = UART_STOPBITS_1;
+    Uart1_handle.Init.Parity     = UART_PARITY_NONE;
+    Uart1_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+    
+    uart_init_ex(&Uart1_handle);
+    
+    NVIC_EnableIRQ(UART1_IRQn);
+    NVIC_SetPriority(UART1_IRQn, 0);
+    __UART_INT_LINE_STATUS_ENABLE(Uart1_handle.UARTx);
+    __UART_INT_RX_ENABLE(Uart1_handle.UARTx);
+    // __enable_irq();
+}
+
 void proj_init(void)
 {
     LOG_INFO(app_tag, "proj_init\r\n");
@@ -53,7 +102,11 @@ void proj_init(void)
     /* system sleep is allowed */
     system_sleep_disable();
 	
-	GLOBAL_INT_START();
+	// GLOBAL_INT_START();
+
+    uart_demo();
+    // uart_write(UART1_BASE, "abcde", 5);
+    LOG_INFO(app_tag, "gump\r\n");
 }
 
 void user_main(void)
@@ -75,13 +128,33 @@ void user_main(void)
     // uart_demo(UART_TRANSMIT_RECEIVE);
     py_main();
     
-    while (1) {}
+    while (1) {
+        uart_putc_noint(UART1_BASE, '*');
+    }
 }
 
 uint8_t fr8000_read_char(void)
 {
     uint8_t ret = 0;
+    if (uart_buf.index > 0) {
+        uart_buf.index--;
+        ret = uart_buf.buf[uart_buf.index];
+    }
     return ret;
 }
 
+void uart1_isr(void)
+{
+    volatile struct_UART_t * const uart_reg_ram = (volatile struct_UART_t *)UART1_BASE;
+    uint32_t isr_id = uart_reg_ram->FCR_IID.IID;
+    uint8_t c;
+
+    if ((isr_id&0x0f) == 0x04 || (isr_id&0x0f) == 0x0c) {
+        c = (uint8_t)uart_reg_ram->DATA_DLL.DATA;
+        // 为了省事，没有做溢出处理
+        uart_buf.buf[uart_buf.index++] = c;
+    } else if ((isr_id&0x0f) == 0x06) {
+        volatile uint32_t tmp = uart_reg_ram->LSR.LSR_DWORD;
+    }
+}
 

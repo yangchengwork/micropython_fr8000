@@ -48,3 +48,9 @@ mp_import_stat_t mp_import_stat(const char *path) {
 mp_lexer_t *mp_lexer_new_from_file(qstr filename) {
     mp_raise_OSError(MP_ENOENT);
 }
+
+const char freqchip_help_text[] =
+    "Welcome to MicroPython!\n"
+    "\n"
+    "For further help on a specific object, type help(obj)\n"
+;
