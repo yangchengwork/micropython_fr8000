@@ -17,7 +17,10 @@ int mp_hal_stdin_rx_chr(void) {
 void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
     // int r = write(STDOUT_FILENO, str, len);
     // (void)r;
+    /*
     while(len--) {
         uart_putc_noint_no_wait(UART1, *str++);
     }
+    */
+    uart_write(UART1, (uint8_t*)str, len);
 }
