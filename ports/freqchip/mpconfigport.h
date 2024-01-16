@@ -17,13 +17,20 @@
 #define MICROPY_FLOAT_IMPL                      (MICROPY_FLOAT_IMPL_FLOAT)
 
 // Fine control over Python builtins, classes, modules, etc.
-#define MICROPY_PY_ASYNC_AWAIT                  (0)
-#define MICROPY_PY_BUILTINS_SET                 (0)
-#define MICROPY_PY_ATTRTUPLE                    (0)
-#define MICROPY_PY_COLLECTIONS                  (0)
-#define MICROPY_PY_MATH                         (0)
+#define MICROPY_PY_ASYNC_AWAIT                  (1)
+#define MICROPY_PY_BUILTINS_SET                 (1)
+#define MICROPY_PY_ATTRTUPLE                    (1)
+#define MICROPY_PY_COLLECTIONS                  (1)
+#define MICROPY_PY_MATH                         (1)
 #define MICROPY_PY_IO                           (0)
-#define MICROPY_PY_STRUCT                       (0)
+#define MICROPY_PY_STRUCT                       (1)
+#define MICROPY_PY_ARRAY                        (1)
+#define MICROPY_PY_SYS                          (1)
+#define MICROPY_PY_ASYNCIO                      (0)
+#define MICROPY_PY_JSON                         (0)
+#define MICROPY_PY_BINASCII                     (0)
+#define MICROPY_PY_TIME                         (0)
+#define MICROPY_PY_RANDOM                       (0)
 
 // Type definitions for the specific machine.
 
@@ -40,4 +47,5 @@ typedef long mp_off_t;
 
 #define MP_STATE_PORT MP_STATE_VM
 
-#define MP_PY_BUILTINS_HELP_TEXT    freqchip_help_text
+#define MICROPY_PY_BUILTINS_HELP                (1)
+#define MICROPY_PY_BUILTINS_HELP_TEXT    freqchip_help_text
