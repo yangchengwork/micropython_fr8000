@@ -48,4 +48,5 @@ typedef long mp_off_t;
 #define MP_STATE_PORT MP_STATE_VM
 
 #define MICROPY_PY_BUILTINS_HELP                (1)
-#define MICROPY_PY_BUILTINS_HELP_TEXT    freqchip_help_text
+#define MICROPY_PY_BUILTINS_HELP_TEXT           gumpyang_help_text
+#define MICROPY_PY_BUILTINS_HELP_MODULES        (1)
