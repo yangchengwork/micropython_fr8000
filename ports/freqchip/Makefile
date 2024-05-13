@@ -21,7 +21,6 @@ SRC_C = \
 	main.c \
 	mphalport.c \
 	help.c \
-	modmyport.c \
 	fr8000/proj_main.c \
 	components/driver/driver_pmu.c \
 	components/driver/driver_uart_ex.c \
@@ -35,14 +34,10 @@ SRC_C = \
 	shared/runtime/pyexec.c \
 	shared/runtime/stdout_helpers.c \
 
-# 	gump_mod/modgump.c \
-
 # components/modules/platform/src/gcc/exception_handlers.c \
 
 # Define source files containung qstrs.
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
-
-SRC_QSTR += modmyport.c
 
 # MicroPython feature configurations
 MICROPY_ROM_TEXT_COMPRESSION ?= 1
