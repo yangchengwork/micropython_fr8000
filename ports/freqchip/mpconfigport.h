@@ -32,6 +32,17 @@
 #define MICROPY_PY_TIME                         (0)
 #define MICROPY_PY_RANDOM                       (0)
 
+#define MICROPY_QSTR_BYTES_IN_HASH              (1)
+
+#define MICROPY_PY_MACHINE                      (1)
+// #define MICROPY_PY_MACHINE_INCLUDEFILE          "ports/freqchip/modmachine.c"
+
+// #define MICROPY_PY_MACHINE_UART                 (1)
+// #define MICROPY_PY_MACHINE_UART_INCLUDEFILE     "ports/freqchip/fr8000/machine_uart.c"
+
+// #define MICROPY_PY_MACHINE_UART_IRQ             (1)
+// #define MICROPY_PY_MACHINE_UART_READCHAR_WRITECHAR (1)
+
 // Type definitions for the specific machine.
 
 typedef intptr_t mp_int_t; // must be pointer size
@@ -50,3 +61,15 @@ typedef long mp_off_t;
 #define MICROPY_PY_BUILTINS_HELP                (1)
 #define MICROPY_PY_BUILTINS_HELP_TEXT           gumpyang_help_text
 #define MICROPY_PY_BUILTINS_HELP_MODULES        (1)
+
+#define MICROPY_MIN_USE_CORTEX_CPU              (1)
+#define MICROPY_HEAP_SIZE                       (2 * 1024)
+
+
+#if MICROPY_PY_MACHINE
+#define MACHINE_BUILTIN_MODULE_CONSTANTS \
+    { MP_ROM_QSTR(MP_QSTR_machine), MP_ROM_PTR(&mp_module_machine) },
+#else
+#define MACHINE_BUILTIN_MODULE_CONSTANTS
+#endif
+

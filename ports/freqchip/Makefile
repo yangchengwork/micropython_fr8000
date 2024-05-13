@@ -39,8 +39,8 @@ SRC_C = \
 # Define source files containung qstrs.
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
 
-# MicroPython feature configurations
-MICROPY_ROM_TEXT_COMPRESSION ?= 1
+# Disable text compression in debug builds
+MICROPY_ROM_TEXT_COMPRESSION = 0
 
 # include header files
 INC += -I. \
