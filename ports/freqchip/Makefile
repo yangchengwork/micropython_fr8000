@@ -22,7 +22,6 @@ SRC_C = \
 	mphalport.c \
 	help.c \
 	fr8000/proj_main.c \
-	gump_mod/modgump.c \
 	components/driver/driver_pmu.c \
 	components/driver/driver_uart_ex.c \
 	components/driver/driver_dma.c \
@@ -39,7 +38,6 @@ SRC_C = \
 
 # Define source files containung qstrs.
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
-SRC_QSTR += gump_mod/modgump.c
 
 # MicroPython feature configurations
 MICROPY_ROM_TEXT_COMPRESSION ?= 1
