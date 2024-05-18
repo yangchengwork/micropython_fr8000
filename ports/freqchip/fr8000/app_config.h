@@ -46,7 +46,7 @@
 //  <0=> LOG_OUTPUT_RTT
 //  <1=> LOG_OUTPUT_UART0
 //  <2=> LOG_OUTPUT_UART1
-#define LOG_OUTPUT_SEL              1
+#define LOG_OUTPUT_SEL              0
 
 // <o> LOG_UART_BAUDRATE_CFG
 //  <i> uart buadrate used for log module, default: BAUDRATE_115200

@@ -37,7 +37,14 @@ SRC_C = \
 # components/modules/platform/src/gcc/exception_handlers.c \
 
 # Define source files containung qstrs.
-SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
+SRC_QSTR += $(SRC_C)
+SRC_QSTR += machine_uart.c \
+
+SRC_C += extmod/modmachine.c \
+		 extmod/machine_mem.c \
+		 extmod/machine_signal.c \
+		 extmod/virtpin.c \
+		 extmod/machine_uart.c \
 
 # Disable text compression in debug builds
 MICROPY_ROM_TEXT_COMPRESSION = 0
@@ -61,6 +68,16 @@ CFLAGS_CORTEX_M3 = -mthumb -mcpu=cortex-m3 -fsigned-char -fmessage-length=0
 CFLAGS = -O3 -g3 $(INC) $(CFLAGS_CORTEX_M3) $(COPT)
 CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -std=gnu11
+
+# RTT
+CFLAGS += -D SEGGER_RTT_ENABLED
+
+SRC_C += components/modules/SEGGER_RTT_V792e/SEGGER_RTT.c \
+		 components/modules/SEGGER_RTT_V792e/SEGGER_RTT_printf.c \
+
+#		 components/modules/SEGGER_RTT_V792e/SEGGER_RTT_Syscalls_GCC.c \
+
+INC += -Icomponents/modules/SEGGER_RTT_V792e \
 
 # Debugging/Optimization
 ifeq ($(DEBUG), 1)

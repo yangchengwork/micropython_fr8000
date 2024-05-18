@@ -13,7 +13,8 @@
 // Python internal features.
 #define MICROPY_ENABLE_GC                       (1)
 #define MICROPY_HELPER_REPL                     (1)
-#define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_TERSE)
+// #define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_TERSE)
+#define MICROPY_ERROR_REPORTING                 (MICROPY_ERROR_REPORTING_NORMAL)
 #define MICROPY_FLOAT_IMPL                      (MICROPY_FLOAT_IMPL_FLOAT)
 
 // Fine control over Python builtins, classes, modules, etc.
@@ -34,11 +35,16 @@
 
 #define MICROPY_QSTR_BYTES_IN_HASH              (1)
 
-#define MICROPY_PY_MACHINE                      (1)
-// #define MICROPY_PY_MACHINE_INCLUDEFILE          "ports/freqchip/modmachine.c"
+// #define MICROPY_DEBUG_VERBOSE                   (1)
+#define MICROPY_NLR_SETJMP                      (1)
 
-// #define MICROPY_PY_MACHINE_UART                 (1)
-// #define MICROPY_PY_MACHINE_UART_INCLUDEFILE     "ports/freqchip/fr8000/machine_uart.c"
+#define MICROPY_PY_MACHINE                      (1)
+#define MICROPY_PY_MACHINE_INCLUDEFILE          "ports/freqchip/modmachine.c"
+// #define MICROPY_PY_MACHINE_PIN_BASE             (1)
+// #define MICROPY_PY_MICROPYTHON_MEM_INFO         (1)
+
+#define MICROPY_PY_MACHINE_UART                 (1)
+#define MICROPY_PY_MACHINE_UART_INCLUDEFILE     "ports/freqchip/machine_uart.c"
 
 // #define MICROPY_PY_MACHINE_UART_IRQ             (1)
 // #define MICROPY_PY_MACHINE_UART_READCHAR_WRITECHAR (1)
