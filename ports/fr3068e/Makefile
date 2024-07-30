@@ -16,7 +16,8 @@ LIBS += -lm
 CROSS_COMPILE ?= arm-none-eabi-
 OBJDUMP ?= $(CROSS_COMPILE)objdump
 
-FR_COMPONTENTS = ./fr3068e/components
+FR_BOARDDIR = ./fr3068e
+FR_COMPONTENTS = $(FR_BOARDDIR)/components
 
 # Define the required source files.
 SRC_S = \
@@ -26,6 +27,7 @@ SRC_C = \
 	main.c \
 	mphalport.c \
 	help.c \
+	$(FR_BOARDDIR)/freqchip_main.c \
 	$(FR_COMPONTENTS)/drivers/device/fr30xx/system_fr30xx.c \
 	$(FR_COMPONTENTS)/drivers/device/fr30xx/trim_fr30xx.c \
 	$(FR_COMPONTENTS)/drivers/device/fr30xx/gcc/syscalls.c \
@@ -107,7 +109,7 @@ all: $(BUILD)/$(PROJECT_NAME).bin
 
 # Define how to build the firmware.
 $(BUILD)/$(PROJECT_NAME).elf: $(OBJ)
-	$(Q)$(CC) $(LDFLAGS) -Wl,-Map,"$(PROJECT_NAME).map" -o $(BUILD)/$(PROJECT_NAME).elf $^
+	$(Q)$(CC) $(LDFLAGS) -Wl,-Map,"$(PROJECT_NAME).map" -o $(BUILD)/$(PROJECT_NAME).elf $^ $(LIBS)
 	$(NO_ECHO)$(OBJCOPY) -O binary -S $(BUILD)/$(PROJECT_NAME).elf $(PROJECT_NAME).bin
 	$(NO_ECHO)$(OBJCOPY) -O ihex   -S $(BUILD)/$(PROJECT_NAME).elf $(PROJECT_NAME).hex
 	$(NO_ECHO)$(OBJDUMP) -D $(BUILD)/$(PROJECT_NAME).elf > $(PROJECT_NAME).dis
