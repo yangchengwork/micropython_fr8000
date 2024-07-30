@@ -12,7 +12,18 @@
 */
 #include "fr30xx.h"
 
-extern int py_main(void);
+#define FREQCHIP_UART_BUF_SIZE 256
+
+extern int py_main(int argc, char **argv);
+static UART_HandleTypeDef  Uart3_handle;
+
+typedef struct freqchip_uart_buf_status {
+    uint8_t buf[FREQCHIP_UART_BUF_SIZE];
+    uint8_t r_index;
+    uint8_t s_index;
+} freqchip_uart_t;
+
+static freqchip_uart_t uart_buf = {0};
 
 #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
 int fputc(int ch, FILE *stream)
@@ -27,10 +38,8 @@ int fputc(int ch, FILE *stream)
 #ifdef __GNUC__
 int _write(int file, char *ptr, int len)
 {
-    UART_HandleTypeDef Uart_Handler;
-    Uart_Handler.UARTx = UART3;
-    uart_transmit(&Uart_Handler, (uint8_t *)ptr, len);
-    while(!(Uart_Handler.UARTx->USR.TFE));
+    uart_transmit(&Uart3_handle, (uint8_t *)ptr, len);
+    while(!(Uart3_handle.UARTx->USR.TFE));
     return len;
 }
 #endif
@@ -73,7 +82,37 @@ void system_clock_config(void)
     System_MCU_clock_Config(&ClkConfig);
 }
 
-UART_HandleTypeDef  Uart3_handle;
+uint8_t freqchip_read_char(void)
+{
+    uint8_t ret = 0;
+    if (uart_buf.s_index != uart_buf.r_index) {
+        ret = uart_buf.buf[uart_buf.r_index];
+        uart_buf.r_index++;
+    }
+    return ret;
+}
+
+void uart3_irq(void)
+{
+    switch (__UART_INT_GET_ID(UART3)) {
+        case INT_INDEX_RX:
+        case INT_INDEX_RX_TOUT: {
+            /* Rx ready */
+            while (Uart3_handle.UARTx->LSR.LSR_BIT.DR) {
+                uart_buf.buf[uart_buf.s_index++] = Uart3_handle.UARTx->DATA_DLL.DATA;
+            }
+        }
+        break;
+    }
+}
+
+void open_uart3_interrupt(void)
+{
+    NVIC_EnableIRQ(UART3_IRQn);
+    NVIC_SetPriority(UART3_IRQn, 2);
+    __UART_INT_RX_ENABLE(Uart3_handle.UARTx);
+}
+
 int main(void)
 {
     GPIO_InitTypeDef    GPIO_Handle;
@@ -82,6 +121,8 @@ int main(void)
     
     system_clock_config();
 
+    __SYSTEM_UART3_CLK_ENABLE();
+    __SYSTEM_UART_CLK_SELECT_COREH();
     /* Uart3 IO init */
     GPIO_Handle.Pin       = GPIO_PIN_4|GPIO_PIN_5;
     GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
@@ -89,7 +130,6 @@ int main(void)
     GPIO_Handle.Alternate = GPIO_FUNCTION_1;
     gpio_init(GPIOB, &GPIO_Handle);
 
-    __SYSTEM_UART_CLK_SELECT_COREH();    
     Uart3_handle.UARTx = UART3;
     Uart3_handle.Init.BaudRate   = 115200;
     Uart3_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
@@ -104,7 +144,9 @@ int main(void)
     printf("System_SPLLCLK:%d\r\n", system_get_SPLLCLK());
     printf("System_AUPLLCLK:%d\r\n", system_get_AUPLLCLK());
 
-    py_main();
+    open_uart3_interrupt();
+
+    py_main(0, NULL);
     
     while(1);
 }

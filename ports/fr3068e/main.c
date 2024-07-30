@@ -9,8 +9,8 @@
 // Allocate memory for the MicroPython GC heap.
 static char heap[4096];
 
-// int main(int argc, char **argv) {
-int py_main(void) {
+int py_main(int argc, char **argv) {
+// int py_main(void) {
     // Initialise the MicroPython runtime.
     mp_stack_ctrl_init();
     gc_init(heap, heap + sizeof(heap));
