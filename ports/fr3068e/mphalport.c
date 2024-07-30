@@ -23,4 +23,9 @@ void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
     }
     */
     // uart_write(UART1, (uint8_t*)str, len);
+    UART_HandleTypeDef Uart_Handler;
+    Uart_Handler.UARTx = UART3;
+    uart_transmit(&Uart_Handler, (uint8_t *)str, len);
+    while(!(Uart_Handler.UARTx->USR.TFE));
+    // return len;
 }
