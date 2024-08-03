@@ -43,13 +43,13 @@ SRC_C += \
 
 # Define source files containung qstrs.
 SRC_QSTR += $(SRC_C)
+SRC_QSTR += machine_uart.c \
 
 SRC_C += extmod/modmachine.c \
 		 extmod/machine_mem.c \
 		 extmod/machine_signal.c \
 		 extmod/virtpin.c \
-
-#		 extmod/machine_uart.c \
+		 extmod/machine_uart.c \
 
 # Disable text compression in debug builds
 MICROPY_ROM_TEXT_COMPRESSION = 0

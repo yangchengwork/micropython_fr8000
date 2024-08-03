@@ -24,6 +24,10 @@
 #include "plf.h"
 
 // #include "uart_demo.h"
+#if SEGGER_RTT_ENABLED
+#include "SEGGER_RTT.h"
+#endif
+
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
 static const char *app_tag = "main";
@@ -90,6 +94,11 @@ void uart_demo(void)
 
 void proj_init(void)
 {
+#if SEGGER_RTT_ENABLED
+    SEGGER_RTT_Init();
+#else
+#endif
+
     LOG_INFO(app_tag, "proj_init\r\n");
     LOG_INFO(app_tag, "lp clk=%d\r\n", pmu_get_rc_clk(false));
 
