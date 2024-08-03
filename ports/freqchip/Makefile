@@ -33,7 +33,7 @@ SRC_C += \
 	main.c \
 	mphalport.c \
 	help.c \
-	$(MCU_DIR)/freqchip_main.c \
+	$(BOARD_DIR)/freqchip_main.c \
 	shared/readline/readline.c \
 	shared/runtime/gchelper_generic.c \
 	shared/runtime/pyexec.c \
@@ -81,10 +81,15 @@ endif
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
+OBJ += $(addprefix $(BUILD)/, $(SRC_S:.S=.o))
 
 Target_OBJS : $(OBJ)
 
 $(BUILD)/%.o : %.c
+	$(info Bulid: compiling $^)
+	$(NO_ECHO)$(CC) $(CFLAGS) $(INC) -c -o  $@ $<
+
+$(BUILD)/%.o : %.S
 	$(info Bulid: compiling $^)
 	$(NO_ECHO)$(CC) $(CFLAGS) $(INC) -c -o  $@ $<
 
