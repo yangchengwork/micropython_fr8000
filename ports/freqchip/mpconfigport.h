@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include "mpconfigboard.h"
+
 // Use the minimal starting configuration (disables all optional features).
 #define MICROPY_CONFIG_ROM_LEVEL (MICROPY_CONFIG_ROM_LEVEL_MINIMUM)
 
@@ -59,8 +61,8 @@ typedef long mp_off_t;
 #include <alloca.h>
 
 // Define the port's name and hardware.
-#define MICROPY_HW_BOARD_NAME "fr8008xp"
-#define MICROPY_HW_MCU_NAME   "fr8000"
+// #define MICROPY_HW_BOARD_NAME "fr8008xp"
+// #define MICROPY_HW_MCU_NAME   "fr8000"
 
 #define MP_STATE_PORT MP_STATE_VM
 
