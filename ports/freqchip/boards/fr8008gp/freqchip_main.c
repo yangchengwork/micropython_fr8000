@@ -33,7 +33,7 @@ const char *app_tag = "uart";
 
 __attribute__((section("stack_section"))) static uint32_t system_stack[SYSTEM_STACK_SIZE/sizeof(uint32_t)];
 
-extern int py_main(void);
+extern int py_main(int argc, char **argv);
 
 const struct jump_table_version_t _jump_table_version __attribute__((section("jump_table_3"))) = 
 {
@@ -58,42 +58,34 @@ typedef struct freqchip_8000_uart_buf_status {
 } fr8000_uart_t;
 
 static GPIO_InitTypeDef    GPIO_Handle;
-static UART_HandleTypeDef  Uart1_handle;
+static UART_HandleTypeDef  Uart0_handle;
 
 static fr8000_uart_t uart_buf = {0};
 
 void uart_demo(void)
 {
-    __SYSTEM_UART1_CLK_ENABLE();
+    __SYSTEM_UART0_CLK_ENABLE();
 
-    /* init GPIO Alternate Function */
-    /*
-    GPIO_Handle.Pin       = GPIO_PIN_2|GPIO_PIN_3;
-    GPIO_Handle.Mode      = GPIO_MODE_AF_PP;
-    GPIO_Handle.Pull      = GPIO_PULLUP;
-    GPIO_Handle.Alternate = GPIO_FUNCTION_5;
-    gpio_init(GPIO_A, &GPIO_Handle);
-    */
 
-    system_set_port_pull(GPIO_PA2,GPIO_PULL_UP,true);
-    /* set PA2 and PA3 for AT command interface */
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_2, PORTA2_FUNC_UART1_RXD);
-    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_3, PORTA3_FUNC_UART1_TXD);
+    system_set_port_pull(GPIO_PA0,GPIO_PULL_UP,true);
+    /* set PA0 and PA1 for REPL command interface */
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_0, PORTA0_FUNC_UART0_RXD);
+    system_set_port_mux(GPIO_PORT_A, GPIO_BIT_1, PORTA1_FUNC_UART0_TXD);
 
-    /* init uart1 */   
-    Uart1_handle.UARTx = Uart1;
-    Uart1_handle.Init.BaudRate   = 115200;
-    Uart1_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
-    Uart1_handle.Init.StopBits   = UART_STOPBITS_1;
-    Uart1_handle.Init.Parity     = UART_PARITY_NONE;
-    Uart1_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
+    /* init uart0 */   
+    Uart0_handle.UARTx = Uart0;
+    Uart0_handle.Init.BaudRate   = 115200;
+    Uart0_handle.Init.DataLength = UART_DATA_LENGTH_8BIT;
+    Uart0_handle.Init.StopBits   = UART_STOPBITS_1;
+    Uart0_handle.Init.Parity     = UART_PARITY_NONE;
+    Uart0_handle.Init.FIFO_Mode  = UART_FIFO_ENABLE;
     
-    uart_init_ex(&Uart1_handle);
+    uart_init_ex(&Uart0_handle);
     
-    NVIC_EnableIRQ(UART1_IRQn);
-    NVIC_SetPriority(UART1_IRQn, 0);
-    __UART_INT_LINE_STATUS_ENABLE(Uart1_handle.UARTx);
-    __UART_INT_RX_ENABLE(Uart1_handle.UARTx);
+    NVIC_EnableIRQ(UART0_IRQn);
+    NVIC_SetPriority(UART0_IRQn, 0);
+    __UART_INT_LINE_STATUS_ENABLE(Uart0_handle.UARTx);
+    __UART_INT_RX_ENABLE(Uart0_handle.UARTx);
     // __enable_irq();
 }
 
@@ -124,11 +116,7 @@ void user_main(void)
 
     proj_init();
 
-    /* demo select: UART_TRANSMIT_RECEIVE */
-	/* demo select: UART_TRANSMIT_RECEIVE_IT  */
-    /* demo select: UART_TRANSMIT_RECEIVE_DMA  */
-    // uart_demo(UART_TRANSMIT_RECEIVE);
-    py_main();
+    py_main(0, NULL);
     
     while (1) {
         // uart_putc_noint(UART1_BASE, '*');
@@ -148,12 +136,12 @@ uint8_t freqchip_log_read_char(void)
 
 void freqchip_log_write(const char *str, uint8_t len)
 {
-    uart_write(UART1, (uint8_t*)str, len);
+    uart_write(UART0, (uint8_t*)str, len);
 }
 
-void uart1_isr(void)
+void uart0_isr(void)
 {
-    volatile struct_UART_t * const uart_reg_ram = (volatile struct_UART_t *)UART1_BASE;
+    volatile struct_UART_t * const uart_reg_ram = (volatile struct_UART_t *)UART0_BASE;
     uint32_t isr_id = uart_reg_ram->FCR_IID.IID;
     uint8_t c;
 
