@@ -17,6 +17,7 @@
 
 #include "driver_system.h"
 #include "driver_pmu.h"
+#include "driver_uart.h"
 #include "driver_uart_ex.h"
 #include "driver_gpio.h"
 
@@ -134,7 +135,7 @@ void user_main(void)
     }
 }
 
-uint8_t fr8000_read_char(void)
+uint8_t freqchip_log_read_char(void)
 {
     uint8_t ret = 0;
     if (uart_buf.r_index != uart_buf.s_index) {
@@ -143,6 +144,11 @@ uint8_t fr8000_read_char(void)
         // uart_putc_noint(UART0_BASE, ret);
     }
     return ret;
+}
+
+void freqchip_log_write(const char *str, uint8_t len)
+{
+    uart_write(UART1, (uint8_t*)str, len);
 }
 
 void uart1_isr(void)
