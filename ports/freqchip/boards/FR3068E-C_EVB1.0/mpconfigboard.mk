@@ -1,4 +1,4 @@
-MCU_SERIES = FR30XX
+MCU_SERIES = fr30xx
 CMSIS_MCU = FR3068EC
 AF_FILE = boards/fr3068ec_af.csv
-LD_FILES = boards/fr3068ec.ld
+# LD_FILES = boards/fr3068ec.ld

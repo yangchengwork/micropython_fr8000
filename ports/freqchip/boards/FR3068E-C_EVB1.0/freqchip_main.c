@@ -82,7 +82,7 @@ void system_clock_config(void)
     System_MCU_clock_Config(&ClkConfig);
 }
 
-uint8_t freqchip_read_char(void)
+uint8_t freqchip_log_read_char(void)
 {
     uint8_t ret = 0;
     if (uart_buf.s_index != uart_buf.r_index) {
@@ -90,6 +90,12 @@ uint8_t freqchip_read_char(void)
         uart_buf.r_index++;
     }
     return ret;
+}
+
+void freqchip_log_write(const char *str, uint8_t len)
+{
+    uart_transmit(&Uart3_handle, (uint8_t *)str, len);
+    while(!(Uart3_handle.UARTx->USR.TFE));
 }
 
 void uart3_irq(void)
