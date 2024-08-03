@@ -1,0 +1,4 @@
+MCU_SERIES = fr8000
+CMSIS_MCU = FR8000
+LD_FILES = boards/fr8000.ld
+

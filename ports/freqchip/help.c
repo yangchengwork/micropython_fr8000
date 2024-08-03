@@ -28,6 +28,8 @@
 
 const char gumpyang_help_text[] =
     "Welcome to MicroPython!\n"
-    "run on FR8008XP Board\n"
+    "run on "
+    MICROPY_HW_BOARD_NAME
+    "\n"
     "For further help on a specific object, type help(obj)\n"
 ;
