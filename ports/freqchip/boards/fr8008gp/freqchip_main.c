@@ -143,6 +143,14 @@ uint8_t freqchip_log_read_char(void)
 }
 
 void freqchip_log_write(const char *str, uint8_t len)
+<<<<<<<< HEAD:ports/freqchip/boards/fr8008gp/freqchip_main.c
+========
+{
+    uart_write(UART1, (uint8_t*)str, len);
+}
+
+void uart1_isr(void)
+>>>>>>>> 0a5862792 (refactor(path): 优化目录结构，让8000先可以编译通过):ports/freqchip/mcu/fr8000/freqchip_main.c
 {
     uart_write(UART0, (uint8_t*)str, len);
 }

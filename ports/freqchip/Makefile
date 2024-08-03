@@ -61,16 +61,6 @@ INC += -I. \
 	-I$(BOARD_DIR) \
 	-I$(MCU_DIR) \
 
-# RTT
-CFLAGS += -D SEGGER_RTT_ENABLED
-
-SRC_C += components/modules/SEGGER_RTT_V792e/SEGGER_RTT.c \
-		 components/modules/SEGGER_RTT_V792e/SEGGER_RTT_printf.c \
-
-#		 components/modules/SEGGER_RTT_V792e/SEGGER_RTT_Syscalls_GCC.c \
-
-INC += -Icomponents/modules/SEGGER_RTT_V792e \
-
 # Debugging/Optimization
 ifeq ($(DEBUG), 1)
 CFLAGS += -g
