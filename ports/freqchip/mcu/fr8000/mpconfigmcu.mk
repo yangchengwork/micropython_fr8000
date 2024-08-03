@@ -10,7 +10,6 @@ SRC_C += \
 	$(dir)/components/driver/driver_dma.c \
 	$(dir)/components/driver/driver_gpio.c \
 	$(dir)/components/modules/platform/src/gcc/boot_vectors.c \
-	$(dir)/components/modules/common/src/co_log.c \
 	$(dir)/components/driver/driver_system.c \
 
 # include header files

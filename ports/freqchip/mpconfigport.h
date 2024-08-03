@@ -45,8 +45,8 @@
 // #define MICROPY_PY_MACHINE_PIN_BASE             (1)
 // #define MICROPY_PY_MICROPYTHON_MEM_INFO         (1)
 
-#define MICROPY_PY_MACHINE_UART                 (1)
-#define MICROPY_PY_MACHINE_UART_INCLUDEFILE     "ports/freqchip/machine_uart.c"
+// #define MICROPY_PY_MACHINE_UART                 (1)
+// #define MICROPY_PY_MACHINE_UART_INCLUDEFILE     "ports/freqchip/machine_uart.c"
 
 // #define MICROPY_PY_MACHINE_UART_IRQ             (1)
 // #define MICROPY_PY_MACHINE_UART_READCHAR_WRITECHAR (1)

@@ -43,13 +43,13 @@ SRC_C += \
 
 # Define source files containung qstrs.
 SRC_QSTR += $(SRC_C)
-SRC_QSTR += machine_uart.c \
 
 SRC_C += extmod/modmachine.c \
 		 extmod/machine_mem.c \
 		 extmod/machine_signal.c \
 		 extmod/virtpin.c \
-		 extmod/machine_uart.c \
+
+#		 extmod/machine_uart.c \
 
 # Disable text compression in debug builds
 MICROPY_ROM_TEXT_COMPRESSION = 0
@@ -68,6 +68,9 @@ COPT = -O0
 else
 COPT += -Os -DNDEBUG
 endif
+
+# GCC 12 warning
+LDFLAGS += -Wl,--no-warn-rwx-segments
 
 # Define the required object files.
 OBJ = $(PY_CORE_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))

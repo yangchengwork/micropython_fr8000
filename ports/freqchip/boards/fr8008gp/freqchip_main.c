@@ -24,10 +24,6 @@
 #include "plf.h"
 
 // #include "uart_demo.h"
-#if SEGGER_RTT_ENABLED
-#include "SEGGER_RTT.h"
-#endif
-
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
 static const char *app_tag = "main";
@@ -94,11 +90,6 @@ void uart_demo(void)
 
 void proj_init(void)
 {
-#if SEGGER_RTT_ENABLED
-    SEGGER_RTT_Init();
-#else
-#endif
-
     LOG_INFO(app_tag, "proj_init\r\n");
     LOG_INFO(app_tag, "lp clk=%d\r\n", pmu_get_rc_clk(false));
 
@@ -143,14 +134,6 @@ uint8_t freqchip_log_read_char(void)
 }
 
 void freqchip_log_write(const char *str, uint8_t len)
-<<<<<<<< HEAD:ports/freqchip/boards/fr8008gp/freqchip_main.c
-========
-{
-    uart_write(UART1, (uint8_t*)str, len);
-}
-
-void uart1_isr(void)
->>>>>>>> 0a5862792 (refactor(path): 优化目录结构，让8000先可以编译通过):ports/freqchip/mcu/fr8000/freqchip_main.c
 {
     uart_write(UART0, (uint8_t*)str, len);
 }
