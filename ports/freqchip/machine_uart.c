@@ -3,7 +3,7 @@
 #include "py/mphal.h"
 // #include "co_log.h"
 // #include "modmachine.h"
-// #include "driver_uart_ex.h"
+#include "driver_uart_ex.h"
 
 #undef LOG_LOCAL_LEVEL
 #define LOG_LOCAL_LEVEL        (LOG_LEVEL_INFO)
