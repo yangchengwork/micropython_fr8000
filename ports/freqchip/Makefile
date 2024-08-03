@@ -108,7 +108,10 @@ $(BUILD)/$(PROJECT_NAME).elf: $(OBJ)
 $(BUILD)/$(PROJECT_NAME).bin: $(BUILD)/$(PROJECT_NAME).elf
 	$(Q)$(OBJCOPY) -O binary $^ $(BUILD)/$(PROJECT_NAME).bin
 	
-# $(Q)$(OBJDUMP) -D $(BUILD)/$(PROJECT_NAME).elf > $(PROJECT_NAME).dis
-
 # Include remaining core make rules.
 include $(TOP)/py/mkrules.mk
+
+.PHONY: clean-bin
+clean: clean-bin
+clean-bin:
+	$(Q)rm -rf *.elf *.bin *.hex *.dis *.map
